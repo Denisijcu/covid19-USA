@@ -64,7 +64,7 @@
     <div class="w-full">
       <div class="bg-gray-300 m-2 p-2 grid md:grid-cols-3 ms:grid-cols-1">
         <div class=""> 
-          <label  for="states" class="font-bold sm:w-1/3">Select State:</label>
+          <!--<label  for="states" class="font-bold sm:w-1/3">Select State:</label> -->
           <select id="states" class="sm:w-1/3"></select> 
           <input
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold ml-2 py-2 px-4 rounded sm:w-full sm:text-sm  md:w-1/6"
@@ -299,7 +299,7 @@
             drawChart();
 
             let lista = arrStates.sort();
-            let listStates = "";
+            let listStates = "<option> Select State </option>";
 
             lista.forEach((name) => {
               listStates += `<option value="${name}"> ${name}    </option>`;
