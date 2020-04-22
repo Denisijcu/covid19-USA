@@ -72,12 +72,12 @@
           value="Search"
           id="submit"
         />
-        <p id="nofound"></p>
+        <p id="loading">Loading ...</p>
         </div>
        <div></div>
       
         
-        <div class="text-center sm:text-sm md:text-xl lg:text-2xl" id="resume"></div>
+        <div class="text-center mt-4 sm:text-sm md:text-xl lg:text-2xl" id="resume"></div>
      
       </div>
       
@@ -107,7 +107,7 @@
           .value.trim()
           .toLowerCase();
         console.log("State submited is", stateName);
-        // document.querySelector("#states").innerHTML = "";
+        document.querySelector("#loading").innerHTML = "Loading...";
 
         getData(stateName);
       }
@@ -311,6 +311,7 @@
 
             document.querySelector("#states").innerHTML = listStates;
             listStates = "";
+            document.querySelector("#loading").innerHTML = '';
 
             let _state = states.filter(
               (state) => state.name.toLowerCase() === stateName
