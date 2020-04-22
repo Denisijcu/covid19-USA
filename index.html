@@ -40,8 +40,8 @@
         // Set chart options
         var options = {
           title: `Stadistic of ${c.name}`,
-          width: 400,
-          height: 300,
+          width: 500,
+          height: 350,
         };
 
         // Instantiate and draw our chart, passing in some options.
@@ -56,40 +56,45 @@
     <link rel="stylesheet" href="css/style.css">
 
   </head>
-  <body class="m-1 p-4">
-    <header class="bg-gray-100 m-2 text-gray-100 static top-0 left-0">
+  <body>
+    <header class="bg-gray-100 m-0 text-gray-100 static top-0 left-0">
       <h1 class="text-left font-bold m-4 text-4xl top-0 left-0">Covid-19</h1>
       <p class="ml-2 p-c">In USA</p>
   </header>
-    <div class="flex flex-wrap">
-      <div class="w-full">
-        <label for="states" class="font-bold">Select State:</label>
-
-        <select id="states"></select>
-        <input
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded md:w-1/6 lg:w-1/6 xl:w-1/6 sm:w-full"
+    <div class="w-full">
+      <div class="bg-gray-300 m-2 p-2 grid md:grid-cols-3 ms:grid-cols-1">
+        <div class=""> 
+          <label  for="states" class="font-bold sm:w-1/3">Select State:</label>
+          <select id="states" class="sm:w-1/3"></select> 
+          <input
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold ml-2 py-2 px-4 rounded sm:w-full md:w-1/6"
           type="submit"
           value="Search"
           id="submit"
         />
         <p id="nofound"></p>
-      </div>
-      <div class="grid grid-cols-2 gap-4 sm:w-full">
-        <div></div>
-        <div id="resume" class=""></div>
-        <div id="chart_div"></div>
-
-        <div class="mb-4 bg-gray-200 p-2 sm:w-full ov">
-          <div id="allStates" class="grid grid-cols-3 sm:w-full"></div>
-          
         </div>
-       
+       <div></div>
+      
+        
+        <div class="text-center sm:text-sm md:text-xl lg:text-2xl" id="resume"></div>
+     
+      </div>
+      
+      <div class="bg-gray-200 m-2 p-2 grid md:grid-cols-2 sm:w-full sm:grid-cols-1">
+        <div  class="sm:w-1/6" id="chart_div"></div>
+        <div class="mb-4 bg-gray-100 p-2 ov">
+          <div id="allStates" class="grid grid-cols-3"></div>
+        </div>
       </div>
     </div>
 
+    
+
+
     <div id="map"></div>
 
-    <footer class="bg-gray-700 text-gray-100 p-4 m-1 text-center">Developed by: Denis Sanchez during the COVID-19 Quarantine</footer>
+    <footer class="bg-gray-700 text-gray-100 text-center">Developed by: Denis Sanchez during the COVID-19 Quarantine</footer>
 
     <script>
       /* Search UI */
@@ -257,19 +262,38 @@
           }
 
           const min = temp;
-          console.log('El menor es ',min,'State', maxStates[iMin], 'Deaths', maxDeath[iMin]);
+         // console.log('El menor es ',min,'State', maxStates[iMin], 'Deaths', maxDeath[iMin]);
+          let max1 = new Intl.NumberFormat('de-DE').format(max);
+          let maxd1 = new Intl.NumberFormat('de-DE').format(maxDeath[iMax]);
+          let min1 = new Intl.NumberFormat('de-DE').format(min);
+          let mind1 = new Intl.NumberFormat('de-DE').format(maxDeath[iMin]);
 
-          document.querySelector("#resume").innerHTML = `<h1> Max State: ${maxStates[iMax]} - Confirmed: ${max}  Deaths: ${maxDeath[iMax]}</h1> <span> <h1> Min State: ${maxStates[iMin]} - Confirmed: ${min}  Deaths: ${maxDeath[iMin]}</h1></span>`;
+          
 
+          let resume = `
+          <table class="w:full ms:w:full" style="width:100%">
+             <tr class="bg-yellow-200">
+              <th></th>
+              <th>State</th>
+              <th>Confirmed</th>
+             <th>Deaths</th>
+            </tr>
+            <tr>
+            <td> Max </td>
+            <td class="sm:text-sm md:text-xl lg:text-xl xl:text-2xl">${maxStates[iMax]}</td>
+            <td class="sm:text-sm md:text-xl lg:text-xl xl:text-2xl">${max1}</td>
+            <td class="sm:text-sm md:text-xl lg:text-xl xl:text-2xl">${maxd1}</td>
+           </tr>
+          <tr>
+            <td> Min</td>
+            <td class="sm:text-sm md:text-xl lg:text-xl xl:text-2xl">${maxStates[iMin]}</td>
+            <td class="sm:text-sm md:text-xl lg:text-xl xl:text-2xl">${min1}</td>
+            <td class="sm:text-sm md:text-xl lg:text-xl xl:text-2xl">${mind1}</td>
+          </tr>
+          </table>
+          `;
 
-
-
-
-           
-           
-
-
-        
+          document.querySelector("#resume").innerHTML = resume ;
 
 
             drawChart();
@@ -295,12 +319,7 @@
             lat = parseFloat(_state[0].latitude);
             lon = parseFloat(_state[0].longitude);
 
-            console.log(
-              "Confirmed",
-              _state[0].confirmed,
-              "Deaths",
-              _state[0].deaths
-            );
+         
 
             c = {
               name: _state[0].name,

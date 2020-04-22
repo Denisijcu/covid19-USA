@@ -22,12 +22,13 @@ header {
 
       .ov {
         overflow-x: scroll;
-        height: 200px;
+        height: 350px;
       }
 
 .p-c {
     font-size: 12px;
 }
+
 
   @keyframes rotate {
     to {
@@ -42,13 +43,21 @@ header {
   }
   
     /* Small (sm) */
-    @media (min-width: 640px) { }
+    @media (min-width: 640px) {
+    
+     }
       
       /* Medium (md) */
-     @media (min-width: 768px) { }
+     @media (min-width: 768px) {
+     
+      }
 
      /* Large (lg) */
-     @media (min-width: 1024px) { /* ... */ }
+     @media (min-width: 1024px) { /* ... */
+    
+    }
 
      /* Extra Large (xl) */
-     @media (min-width: 1280px) { /* ... */}
+     @media (min-width: 1280px) { /* ... */
+    
+    }
