@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <!--Load the AJAX API-->
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script type="text/javascript">
+      // Load the Visualization API and the corechart package.
+      google.charts.load("current", { packages: ["corechart"] });
+
+      let country = "USA";
+      let c = {
+        name: "",
+        confirmed: 0.0,
+        deaths: 0.0,
+      };
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(getData(country));
+
+      function drawChart() {
+        // Create the data table.
+
+        var data = google.visualization.arrayToDataTable([
+          ["State", c.name, { role: "style" }],
+          ["Confirmed", c.confirmed, "blue"],
+          ["Deaths", c.deaths, "red"],
+        ]);
+
+        // Set chart options
+        var options = {
+          title: `Stadistic of ${c.name}`,
+          width: 400,
+          height: 300,
+        };
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.ColumnChart(
+          document.getElementById("chart_div")
+        );
+
+        chart.draw(data, options);
+      }
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+  </head>
+  <body class="m-1 p-4">
+    <header class="bg-gray-100 m-2 text-gray-100 static top-0 left-0">
+      <h1 class="text-left font-bold m-4 text-4xl top-0 left-0">Covid-19</h1>
+      <p class="ml-2 p-c">In USA</p>
+  </header>
+    <div class="flex flex-wrap">
+      <div class="w-full">
+        <label for="states" class="font-bold">Select State:</label>
+
+        <select id="states"></select>
+        <input
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded md:w-1/6 lg:w-1/6 xl:w-1/6 sm:w-full"
+          type="submit"
+          value="Search"
+          id="submit"
+        />
+        <p id="nofound"></p>
+      </div>
+      <div class="grid grid-cols-2 gap-4 sm:w-full">
+        <div></div>
+        <div id="resume" class="">Max:                         Min: </div>
+        <div id="chart_div"></div>
+
+        <div class="mb-4 bg-gray-200 p-2 sm:w-full ov">
+          <div id="allStates" class="grid grid-cols-3 sm:w-full"></div>
+          
+        </div>
+       
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+      /* Search UI */
+
+      const btnSubmit = document.querySelector("#submit");
+      btnSubmit.addEventListener("click", fnSubmit, false);
+      function fnSubmit() {
+        stateName = document
+          .querySelector("#states")
+          .value.trim()
+          .toLowerCase();
+        console.log("State submited is", stateName);
+        // document.querySelector("#states").innerHTML = "";
+
+        getData(stateName);
+      }
+
+      /*** End Search  ***/
+
+      /* Initial Load Map */
+
+      let lat = 44.1664747;
+      let lon = -70.20380627;
+      var map;
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: lat, lng: lon },
+          zoom: 8,
+        });
+      }
+      /**  End Load Init Map **/
+    </script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXewc08SIDRziYbSkp1HhAa-bSknxSK4g&callback=initMap"
+      async
+      defer
+    ></script>
+
+    <script>
+      /*   Get data from API */
+      let states = [];
+      let state = {
+        name: "",
+        censusarea: 0.0,
+        latitude: 0.0,
+        longitude: 0.0,
+        confirmed: 0.0,
+        deaths: 0.0,
+      };
+
+      function getData(stateName) {
+        fetch("https://covid19-data.p.rapidapi.com/geojson-us", {
+          method: "GET",
+          headers: {
+            "x-rapidapi-host": "covid19-data.p.rapidapi.com",
+            "x-rapidapi-key":
+              "a4d88542ddmsh83b0bba200cbeadp153617jsn8ecb1e30a036",
+          },
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            data.features.forEach((c) => {
+              state = {
+                name: c.properties.name,
+                censusarea: c.properties.censusarea,
+                latitude: c.properties.latitude,
+                longitude: c.properties.longitude,
+                confirmed: c.properties.confirmed,
+                deaths: c.properties.deaths,
+              };
+
+              states.push(state);
+            });
+           
+            let arrStates = [];
+            let allStates = ``;
+            let maxStates = [];
+            let maxC=[];
+            let minC=[];
+            let maxDeath=[];
+            for (let i = 0; i < states.length; i++) {
+              arrStates.push(states[i].name);
+              maxC.push(states[i].confirmed);
+              minC.push(states[i].confirmed);
+              maxDeath.push(states[i].deaths);
+              maxStates.push(states[i].name);
+              let conf = new Intl.NumberFormat('de-DE').format(states[i].confirmed);
+              let death = new Intl.NumberFormat('de-DE').format(states[i].deaths);
+              allStates += `
+                
+             
+                     <div>${states[i].name}</div>
+                     <div>${conf}</div>
+                     <div>${death}</div>
+      
+                `;
+            }
+
+            let _allStates = `
+            
+                     <div class="bg-teal-500 font-bold text-center">State</div>
+                     <div class="bg-teal-500 font-bold text-center">Confirmed</div>
+                     <div class="bg-teal-500 font-bold text-center">Deaths</div>
+            `;
+
+            document.querySelector("#allStates").innerHTML =
+              _allStates + allStates;
+
+            /* Total Global  */
+            let initialValue = 0;
+            let sumConfirmed = states.reduce(function (
+              accumulator,
+              currentValue
+            ) {
+              return accumulator + currentValue.confirmed;
+            },
+            initialValue);
+            initialValue = 0;
+            let sumDeaths = states.reduce(function (accumulator, currentValue) {
+              return accumulator + currentValue.deaths;
+            }, initialValue);
+
+           
+            c = {
+              name: "USA",
+              confirmed: sumConfirmed,
+              deaths: sumDeaths,
+            };
+
+            
+            let temp = 0;
+            let iMax = 0;
+
+          
+
+            for(let m=0; m<maxC.length; m++){
+             
+               if(maxC[m]<temp){
+                  delete maxC[m];
+               }else{
+                  temp = maxC[m];
+                  iMax = m;
+               }
+        
+            }
+
+            const max = temp;
+            console.log("Max", max,'State', maxStates[iMax], 'Deaths', maxDeath[iMax]);
+            
+           // minC.map(e => console.log(e));
+
+            temp = minC[0];
+            let iMin = 0;
+            for(let m=1; m<minC.length; m++){
+             if(minC[m]>temp){
+                  delete minC[m]; 
+             }else{
+                  temp = minC[m];
+                  iMin = m;
+             }
+
+          }
+
+          const min = temp;
+          console.log('El menor es ',min,'State', maxStates[iMin], 'Deaths', maxDeath[iMin]);
+
+          document.querySelector("#resume").innerHTML = `<h1> Max State: ${maxStates[iMax]} - Confirmed: ${max}  Deaths: ${maxDeath[iMax]}</h1> <span> <h1> Min State: ${maxStates[iMin]} - Confirmed: ${min}  Deaths: ${maxDeath[iMin]}</h1></span>`;
+
+
+
+
+
+           
+           
+
+
+        
+
+
+            drawChart();
+
+            let lista = arrStates.sort();
+            let listStates = "";
+
+            lista.forEach((name) => {
+              listStates += `<option value="${name}"> ${name}    </option>`;
+            });
+
+            lista.splice(0, lista.length);
+            document.querySelector("#states").innerHTML = "";
+            arrStates.splice(0, arrStates.length);
+
+            document.querySelector("#states").innerHTML = listStates;
+            listStates = "";
+
+            let _state = states.filter(
+              (state) => state.name.toLowerCase() === stateName
+            );
+
+            lat = parseFloat(_state[0].latitude);
+            lon = parseFloat(_state[0].longitude);
+
+            console.log(
+              "Confirmed",
+              _state[0].confirmed,
+              "Deaths",
+              _state[0].deaths
+            );
+
+            c = {
+              name: _state[0].name,
+              confirmed: _state[0].confirmed,
+              deaths: _state[0].deaths,
+            };
+            
+          
+
+
+            drawChart();
+
+            states.splice(0, states.length);
+            _state.splice(0, _state.length);
+
+            initMap();
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
+      getData();
+    </script>
+  </body>
+</html>
